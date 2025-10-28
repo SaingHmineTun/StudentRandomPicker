@@ -1,6 +1,7 @@
 package it.saimao;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -65,15 +66,33 @@ public class Main extends Application {
 
         String[] afternoonClass = {"Lao Lao", "La Han", "Phoung Num", "Kham Hleng", "Seng Aom", "Mo Noung", "Jao Khao", "Jarm Hom Lao"};
         String[] morningClass = {"A", "B", "C", "D", "E", "F", "G"};
+        String[] shanNumbers = {"ၼိုင်ႈ", "သွင်", "သၢမ်"};
 
         btPick.setOnAction(event -> {
-            String name;
-            if (rbMorning.isSelected()) {
-                name = morningClass[new Random().nextInt(morningClass.length)];
-            } else {
-                name = afternoonClass[new Random().nextInt(afternoonClass.length)];
-            }
-            lbName.setText(name);
+
+            Thread th = new Thread(() -> {
+                for (int i = 0; i < 3; i++) {
+                    int finalI = i;
+                    Platform.runLater(() -> {
+                        lbName.setText(shanNumbers[finalI]);
+                    });
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String name;
+                if (rbMorning.isSelected()) {
+                    name = morningClass[new Random().nextInt(morningClass.length)];
+                } else {
+                    name = afternoonClass[new Random().nextInt(afternoonClass.length)];
+                }
+                Platform.runLater(() -> {
+                    lbName.setText(name);
+                });
+            });
+            th.start();
         });
 
 
